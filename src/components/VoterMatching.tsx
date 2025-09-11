@@ -1,31 +1,34 @@
 import React, { useState } from 'react';
-import { ArrowLeft, Vote, ChevronRight, CheckCircle, Loader2, Award, TrendingUp } from 'lucide-react';
-import { quizData, matchResults } from '../data/mockData';
+import { ArrowLeft, Target, Check, X } from 'lucide-react';
 
 interface VoterMatchingProps {
   onBack: () => void;
 }
 
-const VoterMatching: React.FC<VoterMatchingProps> = ({ onBack }) => {
+function VoterMatching({ onBack }: VoterMatchingProps) {
   const [currentQuestion, setCurrentQuestion] = useState(0);
-  const [answers, setAnswers] = useState<string[]>([]);
-  const [isProcessing, setIsProcessing] = useState(false);
+  const [answers, setAnswers] = useState<number[]>([]);
   const [showResults, setShowResults] = useState(false);
 
-  const handleAnswerSelect = (answer: string) => {
-    const newAnswers = [...answers];
-    newAnswers[currentQuestion] = answer;
-    setAnswers(newAnswers);
+  const questions = [
+    "The government should increase spending on public healthcare",
+    "Climate change requires immediate government intervention",
+    "Taxes should be lowered for businesses to stimulate growth",
+    "Immigration levels should be significantly reduced",
+    "The government should provide universal basic income",
+    "Military spending should be increased for national security",
+    "Education should be free at all levels including university",
+    "Government regulation of big tech companies should increase"
+  ];
 
-    if (currentQuestion < quizData.length - 1) {
-      setTimeout(() => setCurrentQuestion(currentQuestion + 1), 300);
+  const handleAnswer = (value: number) => {
+    const newAnswers = [...answers, value];
+    setAnswers(newAnswers);
+    
+    if (currentQuestion < questions.length - 1) {
+      setCurrentQuestion(currentQuestion + 1);
     } else {
-      // Quiz completed, process results
-      setIsProcessing(true);
-      setTimeout(() => {
-        setIsProcessing(false);
-        setShowResults(true);
-      }, 3000);
+      setShowResults(true);
     }
   };
 
@@ -33,233 +36,177 @@ const VoterMatching: React.FC<VoterMatchingProps> = ({ onBack }) => {
     setCurrentQuestion(0);
     setAnswers([]);
     setShowResults(false);
-    setIsProcessing(false);
   };
 
-  const getMatchingResults = () => {
-    // Simple logic to determine matches based on answers
-    const answerKey = answers.join('');
-    return matchResults[answerKey] || matchResults.default;
-  };
-
-  const results = showResults ? getMatchingResults() : null;
-
-  return (
-    <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8 relative">
-      {/* Header */}
-      <div className="mb-8">
-        <button
-          onClick={onBack}
-          className="flex items-center space-x-2 text-white/70 hover:text-white transition-colors mb-6 bg-white/10 backdrop-blur-lg rounded-xl px-4 py-2 border border-white/20"
-        >
-          <ArrowLeft className="w-4 h-4" />
-          <span>Back to Home</span>
-        </button>
-        
-        <div className="flex items-center space-x-4 mb-6">
-          <div className="w-16 h-16 bg-gradient-to-br from-green-400 to-green-600 rounded-2xl flex items-center justify-center shadow-2xl">
-            <Vote className="w-6 h-6 text-white" />
+  if (showResults) {
+    return (
+      <div className="min-h-screen bg-bg py-8 px-4 sm:px-6 lg:px-8">
+        <div className="max-w-4xl mx-auto">
+          <div className="flex items-center mb-8">
+            <button
+              onClick={onBack}
+              className="flex items-center space-x-2 text-on-surface/70 hover:text-on-surface transition-colors"
+            >
+              <ArrowLeft className="w-5 h-5" />
+              <span>Back to Home</span>
+            </button>
           </div>
-          <div>
-            <h1 className="text-4xl font-bold text-white">Personalized Voter Matching</h1>
-            <p className="text-white/70">Discover which political parties align with your values</p>
-          </div>
-        </div>
-      </div>
 
-      {!showResults && !isProcessing && (
-        <div className="bg-white/10 backdrop-blur-lg rounded-2xl shadow-2xl p-8 border border-white/20">
-          {/* Progress Bar */}
-          <div className="mb-8">
-            <div className="flex justify-between items-center mb-2">
-              <span className="text-sm font-medium text-white">Question {currentQuestion + 1} of {quizData.length}</span>
-              <span className="text-sm text-white/70">{Math.round(((currentQuestion + 1) / quizData.length) * 100)}% Complete</span>
+          <div className="bg-surface/50 backdrop-blur-lg rounded-2xl border border-gray-light/20 p-8">
+            <div className="text-center mb-8">
+              <div className="w-16 h-16 bg-gradient-to-br from-purple to-purple-hover rounded-full flex items-center justify-center mx-auto mb-4">
+                <Target className="w-8 h-8 text-on-surface" />
+              </div>
+              <h1 className="text-2xl font-bold text-on-surface mb-2">Your Political Matches</h1>
+              <p className="text-on-surface/70">Based on your responses, here are your top political alignments</p>
             </div>
-            <div className="w-full bg-white/20 rounded-full h-3">
-              <div
-                className="bg-gradient-to-r from-green-400 to-green-600 h-3 rounded-full transition-all duration-500 shadow-lg"
-                style={{ width: `${((currentQuestion + 1) / quizData.length) * 100}%` }}
-              ></div>
-            </div>
-          </div>
 
-          {/* Question */}
-          <div className="mb-8">
-            <h2 className="text-3xl font-bold text-white mb-4">{quizData[currentQuestion].question}</h2>
-            <p className="text-white/70">{quizData[currentQuestion].description}</p>
-          </div>
-
-          {/* Answer Options */}
-          <div className="space-y-4">
-            {quizData[currentQuestion].options.map((option, index) => (
-              <button
-                key={index}
-                onClick={() => handleAnswerSelect(option.value)}
-                className="w-full p-6 text-left border border-white/20 rounded-xl hover:border-green-400/50 hover:bg-white/10 transition-all duration-300 group backdrop-blur-lg hover:scale-105"
-              >
-                <div className="flex items-center justify-between">
-                  <div className="flex-1">
-                    <h3 className="font-semibold text-white mb-2 group-hover:text-green-400 transition-colors">
-                      {option.text}
-                    </h3>
-                    <p className="text-white/70 text-sm">{option.description}</p>
-                  </div>
-                  <ChevronRight className="w-5 h-5 text-white/50 group-hover:text-green-400 transition-colors" />
+            <div className="space-y-4 mb-8">
+              <div className="bg-primary/10 border border-primary/20 rounded-xl p-6">
+                <div className="flex justify-between items-center mb-4">
+                  <h3 className="text-lg font-semibold text-primary">Progressive Alliance</h3>
+                  <span className="text-2xl font-bold text-primary">87%</span>
                 </div>
-              </button>
-            ))}
-          </div>
-
-          {/* Previous Answers */}
-          {answers.length > 0 && (
-            <div className="mt-8 pt-6 border-t border-white/20">
-              <h3 className="text-sm font-medium text-white/70 mb-4">Your Answers So Far:</h3>
-              <div className="flex flex-wrap gap-2">
-                {answers.slice(0, currentQuestion).map((answer, index) => (
-                  <div key={index} className="flex items-center space-x-1 bg-green-500/20 text-green-300 px-3 py-1 rounded-full text-sm border border-green-400/30">
-                    <CheckCircle className="w-3 h-3" />
-                    <span>Q{index + 1}: {answer}</span>
-                  </div>
-                ))}
+                <p className="text-on-surface/70 text-sm">
+                  Strong alignment with progressive social policies, environmental protection, and public service investment.
+                </p>
               </div>
-            </div>
-          )}
-        </div>
-      )}
 
-      {isProcessing && (
-        <div className="bg-white rounded-xl shadow-lg p-8 border border-slate-100 text-center">
-          <div className="max-w-2xl mx-auto">
-            <div className="flex items-center justify-center space-x-3 mb-6">
-              <Loader2 className="w-8 h-8 animate-spin text-green-600" />
-              <span className="text-2xl font-bold text-slate-800">Analyzing Your Preferences</span>
-            </div>
-            
-            <div className="bg-green-50 rounded-lg p-6 mb-6">
-              <div className="text-sm text-green-800 space-y-3">
-                <p>🧠 Processing your policy preferences...</p>
-                <p>🔍 Comparing with party manifestos...</p>
-                <p>📊 Calculating compatibility scores...</p>
-                <p>✅ Generating personalized recommendations...</p>
+              <div className="bg-purple/10 border border-purple/20 rounded-xl p-6">
+                <div className="flex justify-between items-center mb-4">
+                  <h3 className="text-lg font-semibold text-purple">Social Democratic Party</h3>
+                  <span className="text-2xl font-bold text-purple">72%</span>
+                </div>
+                <p className="text-on-surface/70 text-sm">
+                  Moderate alignment with social welfare policies and regulated market economy approaches.
+                </p>
+              </div>
+
+              <div className="bg-pink/10 border border-pink/20 rounded-xl p-6">
+                <div className="flex justify-between items-center mb-4">
+                  <h3 className="text-lg font-semibold text-pink">Green Party</h3>
+                  <span className="text-2xl font-bold text-pink">68%</span>
+                </div>
+                <p className="text-on-surface/70 text-sm">
+                  Good alignment with environmental policies and sustainable development priorities.
+                </p>
               </div>
             </div>
 
-            <p className="text-slate-600">
-              Our AI is analyzing your responses against political party positions to find your best matches.
-            </p>
-          </div>
-        </div>
-      )}
-
-      {showResults && results && (
-        <div className="space-y-8">
-          {/* Results Header */}
-          <div className="bg-white rounded-xl shadow-lg p-6 border border-slate-100">
-            <div className="flex items-center justify-between">
-              <div>
-                <h2 className="text-2xl font-bold text-slate-800 mb-2">Your Political Matches</h2>
-                <p className="text-slate-600">Based on your responses, here are your top party alignments</p>
-              </div>
+            <div className="flex justify-center space-x-4">
               <button
                 onClick={resetQuiz}
-                className="bg-green-600 text-white px-4 py-2 rounded-lg font-medium hover:bg-green-700 transition-colors"
+                className="bg-surface border border-gray-light text-on-surface px-6 py-3 rounded-xl font-medium hover:bg-gray-light/20 transition-colors"
               >
                 Retake Quiz
               </button>
-            </div>
-          </div>
-
-          {/* Match Results */}
-          <div className="space-y-6">
-            {results.matches.map((match, index) => (
-              <div key={index} className="bg-white rounded-xl shadow-lg p-8 border border-slate-100">
-                <div className="flex items-start justify-between mb-6">
-                  <div className="flex items-center space-x-4">
-                    <div className={`w-16 h-16 rounded-xl flex items-center justify-center ${
-                      index === 0 ? 'bg-gradient-to-br from-green-500 to-green-600' : 
-                      index === 1 ? 'bg-gradient-to-br from-blue-500 to-blue-600' : 
-                      'bg-gradient-to-br from-slate-500 to-slate-600'
-                    }`}>
-                      {index === 0 && <Award className="w-8 h-8 text-white" />}
-                      {index === 1 && <TrendingUp className="w-8 h-8 text-white" />}
-                      {index === 2 && <Vote className="w-8 h-8 text-white" />}
-                    </div>
-                    <div>
-                      <div className="flex items-center space-x-3 mb-2">
-                        <h3 className="text-2xl font-bold text-slate-800">{match.party}</h3>
-                        {index === 0 && (
-                          <span className="bg-green-100 text-green-700 px-3 py-1 rounded-full text-sm font-medium">
-                            Best Match
-                          </span>
-                        )}
-                      </div>
-                      <p className="text-slate-600">{match.description}</p>
-                    </div>
-                  </div>
-                  <div className="text-right">
-                    <div className={`text-4xl font-bold mb-1 ${
-                      index === 0 ? 'text-green-600' : 
-                      index === 1 ? 'text-blue-600' : 
-                      'text-slate-600'
-                    }`}>
-                      {match.percentage}%
-                    </div>
-                    <div className="text-slate-500 text-sm">Compatibility</div>
-                  </div>
-                </div>
-
-                {/* Match Bar */}
-                <div className="mb-6">
-                  <div className="w-full bg-slate-200 rounded-full h-3">
-                    <div
-                      className={`h-3 rounded-full transition-all duration-1000 ${
-                        index === 0 ? 'bg-gradient-to-r from-green-500 to-green-600' : 
-                        index === 1 ? 'bg-gradient-to-r from-blue-500 to-blue-600' : 
-                        'bg-gradient-to-r from-slate-500 to-slate-600'
-                      }`}
-                      style={{ width: `${match.percentage}%` }}
-                    ></div>
-                  </div>
-                </div>
-
-                {/* Reasons */}
-                <div>
-                  <h4 className="font-semibold text-slate-800 mb-4">Why This Match?</h4>
-                  <div className="space-y-3">
-                    {match.reasons.map((reason, reasonIndex) => (
-                      <div key={reasonIndex} className="flex items-start space-x-3">
-                        <CheckCircle className="w-5 h-5 text-green-500 mt-0.5 flex-shrink-0" />
-                        <span className="text-slate-700">{reason}</span>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
-
-          {/* Summary */}
-          <div className="bg-gradient-to-r from-slate-800 to-slate-900 rounded-xl shadow-lg p-8 text-white">
-            <h3 className="text-xl font-bold mb-4">Your Political Profile</h3>
-            <div className="grid md:grid-cols-3 gap-6">
-              <div className="text-center">
-                <div className="text-3xl font-bold text-green-400 mb-2">Economy</div>
-                <div className="text-slate-300 text-sm">Prioritizes {answers[0] === 'A' ? 'Social Welfare' : 'Business Growth'}</div>
-              </div>
-              <div className="text-center">
-                <div className="text-3xl font-bold text-blue-400 mb-2">Environment</div>
-                <div className="text-slate-300 text-sm">Prefers {answers[1] === 'A' ? 'Regulations' : 'Market Solutions'}</div>
-              </div>
-              <div className="text-center">
-                <div className="text-3xl font-bold text-purple-400 mb-2">Education</div>
-                <div className="text-slate-300 text-sm">Supports {answers[2] === 'A' ? 'Free Access' : 'Merit-Based Aid'}</div>
-              </div>
+              <button
+                onClick={onBack}
+                className="bg-primary hover:bg-primary-hover text-bg px-6 py-3 rounded-xl font-medium transition-colors"
+              >
+                Explore Manifestos
+              </button>
             </div>
           </div>
         </div>
-      )}
+      </div>
+    );
+  }
+
+  return (
+    <div className="min-h-screen bg-bg py-8 px-4 sm:px-6 lg:px-8">
+      <div className="max-w-2xl mx-auto">
+        <div className="flex items-center mb-8">
+          <button
+            onClick={onBack}
+            className="flex items-center space-x-2 text-on-surface/70 hover:text-on-surface transition-colors"
+          >
+            <ArrowLeft className="w-5 h-5" />
+            <span>Back to Home</span>
+          </button>
+        </div>
+
+        <div className="bg-surface/50 backdrop-blur-lg rounded-2xl border border-gray-light/20 p-8">
+          <div className="mb-8">
+            <div className="flex items-center justify-between mb-4">
+              <div className="flex items-center space-x-3">
+                <div className="w-10 h-10 bg-gradient-to-br from-purple to-purple-hover rounded-xl flex items-center justify-center">
+                  <Target className="w-5 h-5 text-on-surface" />
+                </div>
+                <div>
+                  <h1 className="text-xl font-bold text-on-surface">Political Matching Quiz</h1>
+                  <p className="text-on-surface/70 text-sm">Question {currentQuestion + 1} of {questions.length}</p>
+                </div>
+              </div>
+              <div className="text-right">
+                <div className="text-sm text-on-surface/70 mb-1">Progress</div>
+                <div className="w-24 bg-gray-light/20 rounded-full h-2">
+                  <div 
+                    className="bg-gradient-to-r from-purple to-pink h-2 rounded-full transition-all duration-300"
+                    style={{ width: `${((currentQuestion + 1) / questions.length) * 100}%` }}
+                  ></div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div className="mb-8">
+            <h2 className="text-lg font-medium text-on-surface mb-6">
+              {questions[currentQuestion]}
+            </h2>
+
+            <div className="space-y-3">
+              <button
+                onClick={() => handleAnswer(5)}
+                className="w-full p-4 bg-surface/60 border border-gray-light/20 rounded-xl hover:border-primary/50 transition-all text-left group"
+              >
+                <div className="flex items-center justify-between">
+                  <span className="text-on-surface group-hover:text-primary">Strongly Agree</span>
+                  <Check className="w-5 h-5 text-primary opacity-0 group-hover:opacity-100" />
+                </div>
+              </button>
+              <button
+                onClick={() => handleAnswer(4)}
+                className="w-full p-4 bg-surface/60 border border-gray-light/20 rounded-xl hover:border-primary/50 transition-all text-left group"
+              >
+                <div className="flex items-center justify-between">
+                  <span className="text-on-surface group-hover:text-primary">Agree</span>
+                  <Check className="w-5 h-5 text-primary opacity-0 group-hover:opacity-100" />
+                </div>
+              </button>
+              <button
+                onClick={() => handleAnswer(3)}
+                className="w-full p-4 bg-surface/60 border border-gray-light/20 rounded-xl hover:border-purple/50 transition-all text-left group"
+              >
+                <div className="flex items-center justify-between">
+                  <span className="text-on-surface group-hover:text-purple">Neutral</span>
+                  <Check className="w-5 h-5 text-purple opacity-0 group-hover:opacity-100" />
+                </div>
+              </button>
+              <button
+                onClick={() => handleAnswer(2)}
+                className="w-full p-4 bg-surface/60 border border-gray-light/20 rounded-xl hover:border-pink/50 transition-all text-left group"
+              >
+                <div className="flex items-center justify-between">
+                  <span className="text-on-surface group-hover:text-pink">Disagree</span>
+                  <X className="w-5 h-5 text-pink opacity-0 group-hover:opacity-100" />
+                </div>
+              </button>
+              <button
+                onClick={() => handleAnswer(1)}
+                className="w-full p-4 bg-surface/60 border border-gray-light/20 rounded-xl hover:border-pink/50 transition-all text-left group"
+              >
+                <div className="flex items-center justify-between">
+                  <span className="text-on-surface group-hover:text-pink">Strongly Disagree</span>
+                  <X className="w-5 h-5 text-pink opacity-0 group-hover:opacity-100" />
+                </div>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   );
-};
+}
 
 export default VoterMatching;

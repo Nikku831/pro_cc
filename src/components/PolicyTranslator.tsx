@@ -1,221 +1,157 @@
 import React, { useState } from 'react';
-import { ArrowLeft, MessageCircle, ArrowRight, Loader2, Lightbulb, AlertCircle } from 'lucide-react';
-import { policyExamples } from '../data/mockData';
+import { ArrowLeft, MessageCircle, ArrowRight, Copy, Check } from 'lucide-react';
 
 interface PolicyTranslatorProps {
   onBack: () => void;
 }
 
-const PolicyTranslator: React.FC<PolicyTranslatorProps> = ({ onBack }) => {
-  const [inputText, setInputText] = useState(policyExamples[0].original);
+function PolicyTranslator({ onBack }: PolicyTranslatorProps) {
+  const [inputText, setInputText] = useState('');
+  const [translatedText, setTranslatedText] = useState('');
   const [isTranslating, setIsTranslating] = useState(false);
-  const [translatedText, setTranslatedText] = useState(policyExamples[0].translated);
-  const [impact, setImpact] = useState(policyExamples[0].impact);
-  const [selectedExample, setSelectedExample] = useState(0);
+  const [copied, setCopied] = useState(false);
+
+  const samplePolicies = [
+    {
+      title: "Healthcare Policy",
+      original: "We commit to implementing a comprehensive integrated care framework that leverages multi-disciplinary healthcare delivery models while optimizing resource allocation through evidence-based population health management strategies.",
+      simple: "We will improve healthcare by having different types of doctors work together better and use research to decide how to best help people in each area stay healthy."
+    },
+    {
+      title: "Economic Policy", 
+      original: "Our fiscal strategy prioritizes counter-cyclical investment mechanisms designed to stimulate aggregate demand through targeted infrastructure expenditure and human capital development initiatives.",
+      simple: "We will spend money on building things like roads and training people when the economy is slow, to create jobs and help the economy grow."
+    },
+    {
+      title: "Climate Policy",
+      original: "We propose establishing a carbon pricing mechanism coupled with renewable energy transition subsidies and circular economy implementation protocols to achieve net-zero emissions by 2050.",
+      simple: "We will make pollution more expensive, help pay for clean energy, and encourage recycling to stop adding harmful gases to the air by 2050."
+    }
+  ];
 
   const handleTranslate = () => {
-    setIsTranslating(true);
+    if (!inputText.trim()) return;
     
-    // Find matching example or use default
-    const matchingExample = policyExamples.find(ex => 
-      ex.original.toLowerCase().includes(inputText.toLowerCase().substring(0, 20))
-    ) || policyExamples[0];
-
+    setIsTranslating(true);
     setTimeout(() => {
-      setTranslatedText(matchingExample.translated);
-      setImpact(matchingExample.impact);
+      const simplified = `This policy means: ${inputText.toLowerCase().replace(/complex|comprehensive|strategic|framework|mechanism/g, 'plan').replace(/implementation|establishment|optimization/g, 'doing')}. In simple terms, it's about making things work better for regular people.`;
+      setTranslatedText(simplified);
       setIsTranslating(false);
     }, 2000);
   };
 
-  const loadExample = (index: number) => {
-    setSelectedExample(index);
-    setInputText(policyExamples[index].original);
-    setTranslatedText(policyExamples[index].translated);
-    setImpact(policyExamples[index].impact);
+  const copyToClipboard = () => {
+    navigator.clipboard.writeText(translatedText);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
+  };
+
+  const loadSample = (sample: typeof samplePolicies[0]) => {
+    setInputText(sample.original);
+    setTranslatedText(sample.simple);
   };
 
   return (
-    <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8 relative">
-      {/* Header */}
-      <div className="mb-8">
-        <button
-          onClick={onBack}
-          className="flex items-center space-x-2 text-white/70 hover:text-white transition-colors mb-6 bg-white/10 backdrop-blur-lg rounded-xl px-4 py-2 border border-white/20"
-        >
-          <ArrowLeft className="w-4 h-4" />
-          <span>Back to Home</span>
-        </button>
-        
-        <div className="flex items-center space-x-4 mb-6">
-          <div className="w-16 h-16 bg-gradient-to-br from-purple-400 to-purple-600 rounded-2xl flex items-center justify-center shadow-2xl">
-            <MessageCircle className="w-6 h-6 text-white" />
-          </div>
-          <div>
-            <h1 className="text-4xl font-bold text-white">Plain English Policy Translator</h1>
-            <p className="text-white/70">Transform political jargon into clear, understandable language</p>
-          </div>
+    <div className="min-h-screen bg-bg py-8 px-4 sm:px-6 lg:px-8">
+      <div className="max-w-4xl mx-auto">
+        <div className="flex items-center mb-8">
+          <button
+            onClick={onBack}
+            className="flex items-center space-x-2 text-on-surface/70 hover:text-on-surface transition-colors"
+          >
+            <ArrowLeft className="w-5 h-5" />
+            <span>Back to Home</span>
+          </button>
         </div>
-      </div>
 
-      <div className="grid lg:grid-cols-2 gap-8">
-        {/* Input Section */}
-        <div className="space-y-6">
-          <div className="bg-white/10 backdrop-blur-lg rounded-2xl shadow-2xl p-6 border border-white/20">
-            <h2 className="text-2xl font-bold text-white mb-4">Policy Text Input</h2>
-            
-            {/* Example Buttons */}
-            <div className="mb-4">
-              <p className="text-sm text-white/70 mb-3">Try these examples:</p>
-              <div className="flex flex-wrap gap-2">
-                {policyExamples.map((example, index) => (
+        <div className="bg-surface/50 backdrop-blur-lg rounded-2xl border border-gray-light/20 p-8">
+          <div className="flex items-center space-x-3 mb-8">
+            <div className="w-12 h-12 bg-gradient-to-br from-pink to-pink-hover rounded-xl flex items-center justify-center">
+              <MessageCircle className="w-6 h-6 text-on-surface" />
+            </div>
+            <div>
+              <h1 className="text-2xl font-bold text-on-surface">Policy Translator</h1>
+              <p className="text-on-surface/70">Transform complex political jargon into plain English</p>
+            </div>
+          </div>
+
+          <div className="grid lg:grid-cols-2 gap-8 mb-8">
+            {/* Input Side */}
+            <div className="space-y-4">
+              <h3 className="text-lg font-semibold text-on-surface">Complex Policy Text</h3>
+              <textarea
+                value={inputText}
+                onChange={(e) => setInputText(e.target.value)}
+                placeholder="Paste complex policy text here..."
+                className="w-full h-48 bg-surface/60 border border-gray-light/30 rounded-xl p-4 text-on-surface placeholder-on-surface/50 resize-none focus:outline-none focus:ring-2 focus:ring-pink/50 focus:border-transparent"
+              />
+              <button
+                onClick={handleTranslate}
+                disabled={!inputText.trim() || isTranslating}
+                className="w-full bg-pink hover:bg-pink-hover text-bg px-6 py-3 rounded-xl font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center space-x-2"
+              >
+                {isTranslating ? (
+                  <div className="flex items-center space-x-2">
+                    <div className="w-4 h-4 border-2 border-bg/30 border-t-bg rounded-full animate-spin"></div>
+                    <span>Translating...</span>
+                  </div>
+                ) : (
+                  <>
+                    <span>Translate</span>
+                    <ArrowRight className="w-4 h-4" />
+                  </>
+                )}
+              </button>
+            </div>
+
+            {/* Output Side */}
+            <div className="space-y-4">
+              <div className="flex items-center justify-between">
+                <h3 className="text-lg font-semibold text-on-surface">Plain English</h3>
+                {translatedText && (
                   <button
-                    key={index}
-                    onClick={() => loadExample(index)}
-                    className={`px-4 py-2 rounded-full text-xs font-medium transition-all duration-300 ${
-                      selectedExample === index
-                        ? 'bg-purple-500/30 text-purple-200 border border-purple-400/50'
-                        : 'bg-white/10 text-white/70 hover:bg-white/20 border border-white/20'
-                    }`}
+                    onClick={copyToClipboard}
+                    className="flex items-center space-x-2 text-on-surface/70 hover:text-on-surface transition-colors"
                   >
-                    {example.category}
+                    {copied ? <Check className="w-4 h-4" /> : <Copy className="w-4 h-4" />}
+                    <span>{copied ? 'Copied!' : 'Copy'}</span>
                   </button>
-                ))}
+                )}
               </div>
-            </div>
-
-            <textarea
-              value={inputText}
-              onChange={(e) => setInputText(e.target.value)}
-              placeholder="Paste political jargon or complex policy text here..."
-              className="w-full h-40 p-4 bg-white/10 border border-white/20 rounded-xl resize-none focus:ring-2 focus:ring-purple-400/50 focus:border-transparent text-white placeholder-white/50 backdrop-blur-lg"
-            />
-
-            <button
-              onClick={handleTranslate}
-              disabled={!inputText.trim() || isTranslating}
-              className="w-full mt-4 bg-gradient-to-r from-purple-500 to-purple-600 text-white px-6 py-4 rounded-xl font-medium hover:from-purple-600 hover:to-purple-700 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center space-x-3 shadow-lg hover:shadow-xl hover:scale-105"
-            >
-              {isTranslating ? (
-                <>
-                  <Loader2 className="w-5 h-5 animate-spin" />
-                  <span>Translating...</span>
-                </>
-              ) : (
-                <>
-                  <ArrowRight className="w-5 h-5" />
-                  <span>Translate to Plain English</span>
-                </>
-              )}
-            </button>
-          </div>
-
-          {/* Tips */}
-          <div className="bg-blue-500/20 rounded-xl p-6 border border-blue-400/30 backdrop-blur-lg">
-            <div className="flex items-start space-x-3">
-              <Lightbulb className="w-6 h-6 text-blue-600 mt-0.5" />
-              <div>
-                <h3 className="font-semibold text-white mb-2">Pro Tips</h3>
-                <ul className="text-white/80 text-sm space-y-1">
-                  <li>• Paste entire policy statements for best results</li>
-                  <li>• Works great with manifesto excerpts</li>
-                  <li>• Try different examples to see the AI in action</li>
-                  <li>• Get impact analysis alongside translations</li>
-                </ul>
+              <div className="w-full h-48 bg-surface/60 border border-gray-light/30 rounded-xl p-4 text-on-surface/80">
+                {translatedText ? (
+                  <p className="leading-relaxed">{translatedText}</p>
+                ) : (
+                  <p className="text-on-surface/50 italic">Simplified text will appear here...</p>
+                )}
               </div>
             </div>
           </div>
-        </div>
 
-        {/* Output Section */}
-        <div className="space-y-6">
-          {/* Plain English Translation */}
-          <div className="bg-white rounded-xl shadow-lg p-6 border border-slate-100">
-            <h3 className="text-xl font-bold text-slate-800 mb-4">Plain English Translation</h3>
-            
-            {isTranslating ? (
-              <div className="flex items-center justify-center h-32 bg-purple-50 rounded-lg">
-                <div className="text-center">
-                  <Loader2 className="w-8 h-8 animate-spin text-purple-600 mx-auto mb-2" />
-                  <p className="text-purple-700 text-sm">Analyzing and simplifying...</p>
-                </div>
-              </div>
-            ) : (
-              <div className="bg-green-50 rounded-lg p-4 border border-green-200">
-                <p className="text-slate-800 leading-relaxed">{translatedText}</p>
-              </div>
-            )}
-          </div>
-
-          {/* Impact Analysis */}
-          <div className="bg-white rounded-xl shadow-lg p-6 border border-slate-100">
-            <h3 className="text-xl font-bold text-slate-800 mb-4">What This Means for You</h3>
-            
-            {isTranslating ? (
-              <div className="flex items-center justify-center h-24 bg-orange-50 rounded-lg">
-                <div className="text-center">
-                  <Loader2 className="w-6 h-6 animate-spin text-orange-600 mx-auto mb-2" />
-                  <p className="text-orange-700 text-sm">Analyzing impact...</p>
-                </div>
-              </div>
-            ) : (
-              <div className="bg-orange-50 rounded-lg p-4 border border-orange-200">
-                <div className="flex items-start space-x-3">
-                  <AlertCircle className="w-5 h-5 text-orange-600 mt-0.5" />
-                  <p className="text-slate-800 leading-relaxed">{impact}</p>
-                </div>
-              </div>
-            )}
-          </div>
-
-          {/* Translation Stats */}
-          <div className="bg-gradient-to-r from-slate-800 to-slate-900 rounded-xl shadow-lg p-6 text-white">
-            <h3 className="text-lg font-bold mb-4">Translation Metrics</h3>
-            <div className="grid grid-cols-2 gap-4">
-              <div className="text-center">
-                <div className="text-2xl font-bold text-purple-400 mb-1">
-                  {Math.max(10, inputText.split(' ').length - translatedText.split(' ').length)}
-                </div>
-                <div className="text-slate-300 text-sm">Words Simplified</div>
-              </div>
-              <div className="text-center">
-                <div className="text-2xl font-bold text-green-400 mb-1">92%</div>
-                <div className="text-slate-300 text-sm">Clarity Improvement</div>
-              </div>
+          {/* Sample Policies */}
+          <div className="space-y-4">
+            <h3 className="text-lg font-semibold text-on-surface">Try These Examples</h3>
+            <div className="grid md:grid-cols-3 gap-4">
+              {samplePolicies.map((sample, index) => (
+                <button
+                  key={index}
+                  onClick={() => loadSample(sample)}
+                  className="p-4 bg-surface/60 border border-gray-light/20 rounded-xl hover:border-pink/50 transition-all text-left group"
+                >
+                  <h4 className="font-semibold text-on-surface mb-2 group-hover:text-pink">
+                    {sample.title}
+                  </h4>
+                  <p className="text-sm text-on-surface/70 line-clamp-3">
+                    {sample.original.substring(0, 100)}...
+                  </p>
+                </button>
+              ))}
             </div>
-          </div>
-        </div>
-      </div>
-
-      {/* How It Works */}
-      <div className="mt-12 bg-white rounded-xl shadow-lg p-8 border border-slate-100">
-        <h2 className="text-2xl font-bold text-slate-800 mb-6 text-center">How Our AI Translation Works</h2>
-        <div className="grid md:grid-cols-3 gap-8">
-          <div className="text-center">
-            <div className="w-16 h-16 bg-purple-100 rounded-full flex items-center justify-center mx-auto mb-4">
-              <MessageCircle className="w-8 h-8 text-purple-600" />
-            </div>
-            <h3 className="font-semibold text-slate-800 mb-2">1. Analyze Context</h3>
-            <p className="text-slate-600 text-sm">Our AI understands the political context and identifies complex terms</p>
-          </div>
-          <div className="text-center">
-            <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
-              <ArrowRight className="w-8 h-8 text-green-600" />
-            </div>
-            <h3 className="font-semibold text-slate-800 mb-2">2. Simplify Language</h3>
-            <p className="text-slate-600 text-sm">Complex jargon is translated into everyday language while preserving meaning</p>
-          </div>
-          <div className="text-center">
-            <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
-              <Lightbulb className="w-8 h-8 text-blue-600" />
-            </div>
-            <h3 className="font-semibold text-slate-800 mb-2">3. Explain Impact</h3>
-            <p className="text-slate-600 text-sm">We provide context on what these policies mean for everyday citizens</p>
           </div>
         </div>
       </div>
     </div>
   );
-};
+}
 
 export default PolicyTranslator;

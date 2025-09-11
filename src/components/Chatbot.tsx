@@ -85,29 +85,29 @@ const Chatbot: React.FC<ChatbotProps> = ({ isOpen, onClose }) => {
     <div className="fixed inset-0 z-50 flex items-end justify-end p-6">
       {/* Backdrop */}
       <div 
-        className="absolute inset-0 bg-black/20 backdrop-blur-sm"
+        className="absolute inset-0 bg-bg/20 backdrop-blur-sm"
         onClick={onClose}
       />
       
       {/* Chat Window */}
-      <div className="relative w-96 h-[600px] bg-white/10 backdrop-blur-xl rounded-2xl shadow-2xl border border-white/20 flex flex-col overflow-hidden">
+      <div className="relative w-96 h-[600px] bg-surface/80 backdrop-blur-xl rounded-2xl shadow-2xl border border-gray-light/30 flex flex-col overflow-hidden">
         {/* Header */}
-        <div className="bg-gradient-to-r from-blue-500/20 to-purple-500/20 p-4 border-b border-white/20">
+        <div className="bg-gradient-to-r from-primary/20 to-purple/20 p-4 border-b border-gray-light/30">
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-3">
-              <div className="w-10 h-10 bg-gradient-to-r from-blue-400 to-purple-500 rounded-full flex items-center justify-center">
-                <Bot className="w-5 h-5 text-white" />
+              <div className="w-10 h-10 bg-gradient-to-r from-primary to-purple rounded-full flex items-center justify-center">
+                <Bot className="w-5 h-5 text-on-surface" />
               </div>
               <div>
-                <h3 className="text-white font-semibold">AI Political Assistant</h3>
-                <p className="text-white/60 text-sm">Online • Ready to help</p>
+                <h3 className="text-on-surface font-semibold">AI Political Assistant</h3>
+                <p className="text-on-surface/60 text-sm">Online • Ready to help</p>
               </div>
             </div>
             <button
               onClick={onClose}
-              className="w-8 h-8 rounded-full bg-white/10 hover:bg-white/20 transition-colors flex items-center justify-center"
+              className="w-8 h-8 rounded-full bg-surface/50 hover:bg-gray-light/50 transition-colors flex items-center justify-center"
             >
-              <X className="w-4 h-4 text-white" />
+              <X className="w-4 h-4 text-on-surface" />
             </button>
           </div>
         </div>
@@ -122,19 +122,19 @@ const Chatbot: React.FC<ChatbotProps> = ({ isOpen, onClose }) => {
               <div className={`flex items-start space-x-2 max-w-[80%] ${message.isBot ? '' : 'flex-row-reverse space-x-reverse'}`}>
                 <div className={`w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 ${
                   message.isBot 
-                    ? 'bg-gradient-to-r from-blue-400 to-purple-500' 
-                    : 'bg-gradient-to-r from-green-400 to-blue-500'
+                    ? 'bg-gradient-to-r from-primary to-purple' 
+                    : 'bg-gradient-to-r from-pink to-primary'
                 }`}>
                   {message.isBot ? (
-                    <Bot className="w-4 h-4 text-white" />
+                    <Bot className="w-4 h-4 text-on-surface" />
                   ) : (
-                    <User className="w-4 h-4 text-white" />
+                    <User className="w-4 h-4 text-on-surface" />
                   )}
                 </div>
                 <div className={`rounded-2xl p-3 ${
                   message.isBot 
-                    ? 'bg-white/10 text-white border border-white/20' 
-                    : 'bg-gradient-to-r from-blue-500 to-purple-600 text-white'
+                    ? 'bg-surface/60 text-on-surface border border-gray-light/30' 
+                    : 'bg-gradient-to-r from-primary to-purple text-bg'
                 }`}>
                   <p className="text-sm leading-relaxed">{message.text}</p>
                   <p className="text-xs opacity-60 mt-1">
@@ -149,14 +149,14 @@ const Chatbot: React.FC<ChatbotProps> = ({ isOpen, onClose }) => {
           {isTyping && (
             <div className="flex justify-start">
               <div className="flex items-start space-x-2 max-w-[80%]">
-                <div className="w-8 h-8 rounded-full bg-gradient-to-r from-blue-400 to-purple-500 flex items-center justify-center">
-                  <Bot className="w-4 h-4 text-white" />
+                <div className="w-8 h-8 rounded-full bg-gradient-to-r from-primary to-purple flex items-center justify-center">
+                  <Bot className="w-4 h-4 text-on-surface" />
                 </div>
-                <div className="bg-white/10 rounded-2xl p-3 border border-white/20">
+                <div className="bg-surface/60 rounded-2xl p-3 border border-gray-light/30">
                   <div className="flex space-x-1">
-                    <div className="w-2 h-2 bg-white/60 rounded-full animate-bounce"></div>
-                    <div className="w-2 h-2 bg-white/60 rounded-full animate-bounce delay-100"></div>
-                    <div className="w-2 h-2 bg-white/60 rounded-full animate-bounce delay-200"></div>
+                    <div className="w-2 h-2 bg-on-surface/60 rounded-full animate-bounce"></div>
+                    <div className="w-2 h-2 bg-on-surface/60 rounded-full animate-bounce delay-100"></div>
+                    <div className="w-2 h-2 bg-on-surface/60 rounded-full animate-bounce delay-200"></div>
                   </div>
                 </div>
               </div>
@@ -166,7 +166,7 @@ const Chatbot: React.FC<ChatbotProps> = ({ isOpen, onClose }) => {
         </div>
 
         {/* Input */}
-        <div className="p-4 border-t border-white/20">
+        <div className="p-4 border-t border-gray-light/30">
           <div className="flex items-center space-x-2">
             <div className="flex-1 relative">
               <textarea
@@ -174,23 +174,23 @@ const Chatbot: React.FC<ChatbotProps> = ({ isOpen, onClose }) => {
                 onChange={(e) => setInputText(e.target.value)}
                 onKeyPress={handleKeyPress}
                 placeholder="Ask me about politics, policies, or manifestos..."
-                className="w-full bg-white/10 border border-white/20 rounded-xl px-4 py-3 text-white placeholder-white/50 resize-none focus:outline-none focus:ring-2 focus:ring-blue-400/50 focus:border-transparent"
+                className="w-full bg-surface/60 border border-gray-light/30 rounded-xl px-4 py-3 text-on-surface placeholder-on-surface/50 resize-none focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-transparent"
                 rows={1}
                 style={{ minHeight: '44px', maxHeight: '120px' }}
               />
               <div className="absolute right-3 top-3">
-                <Sparkles className="w-4 h-4 text-white/40" />
+                <Sparkles className="w-4 h-4 text-on-surface/40" />
               </div>
             </div>
             <button
               onClick={handleSendMessage}
               disabled={!inputText.trim() || isTyping}
-              className="w-11 h-11 bg-gradient-to-r from-blue-500 to-purple-600 rounded-xl flex items-center justify-center text-white hover:from-blue-600 hover:to-purple-700 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed hover:scale-105"
+              className="w-11 h-11 bg-gradient-to-r from-primary to-purple rounded-xl flex items-center justify-center text-bg hover:from-primary-hover hover:to-purple-hover transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed hover:scale-105"
             >
               <Send className="w-4 h-4" />
             </button>
           </div>
-          <p className="text-white/40 text-xs mt-2 text-center">
+          <p className="text-on-surface/40 text-xs mt-2 text-center">
             AI responses are simulated for demo purposes
           </p>
         </div>

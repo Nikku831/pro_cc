@@ -1,3 +1,30 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+:root {
+  /* Base Colors */
+  --color-bg: #121212;
+  --color-surface: #1E1E1E;
+  --color-on-surface: #FFFFFF;
+  
+  /* Primary Accent (Blue) */
+  --color-primary: #0EA5E9;
+  --color-primary-hover: #0284C7;
+  
+  /* Secondary Accent (Purple) */
+  --color-purple: #8B5CF6;
+  --color-purple-hover: #6D28D9;
+  
+  /* Highlight Accent (Pink) */
+  --color-pink: #EC4899;
+  --color-pink-hover: #DB2777;
+  
+  /* Neutral Gray */
+  --color-gray-light: #2A2A2A;
+  --color-gray-dark: #0F0F0F;
+}
+
+body {
+  @apply bg-bg text-on-surface;
+}
